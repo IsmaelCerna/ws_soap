@@ -1,30 +1,56 @@
-<?php 
-
-    class DB extends PDO {
-        public function __construct($dsn, $username = NULL, $password = NULL, $options = []){
-
-            $default_options = [
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ];
-
-            $options = array_replace($default_options);
-            parent::__construct($dsn,$username,$password,$options);
-        }
+<?php
+require_once("conn.php");
 
 
-        public function run($sql, $args = null){
-            if($args){
-                return $this->query($sql);
-            }
-            $stmt = $this->prepare($sql);
-            $stmt->execute($args);
-            $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $stmt;
-        }
+class Departamento{
+    public $last;
+    public function obtenerDepartamentos(){
+        $db = new DB('mysql:host=localhost;dbname=catalogos;charset=utf8mb4',"root","admin");
+        $sql = 'SELECT
+                    d.id_departamento as id,
+                    d.nombre_departamento as departamento,
+                    z.id_zona,
+                    z.nombre_zona
+                FROM
+                    departamento d
+                INNER JOIN zona z on d.id_zona=z.id_zona;';
+        $data = $db->run($sql)->fetchAll();
+        return$data;        
 
+    }
+    public function obtenerDepartamentosPorZona($idzona){
+        $db = new DB('mysql:host=localhost;dbname=catalogos;charset=utf8mb4',"root","admin");
+        $sql = 'SELECT
+                    d.id_departamento as id,
+                    d.nombre_departamento as departamento,
+                    z.id_zona,
+                    z.nombre_zona
+                FROM
+                    departamento d
+                INNER JOIN zona z on d.id_zona=z.id_zona
+                WHERE
+                    d.iz_zona='.$idzona.';';
+        $data = $db->run($sql)->fetchAll();
+        return$data; 
 
     }
 
+    public function obtenerDepartamento($iddepto){
+        $db = new DB('mysql:host=localhost;dbname=catalogos;charset=utf8mb4',"root","admin");
+        $sql = 'SELECT
+                    d.id_departamento as id,
+                    d.nombre_departamento as departamento,
+                    z.id_zona,
+                    z.nombre_zona
+                FROM
+                    departamento d
+                INNER JOIN zona z on d.id_zona=z.id_zona
+                WHERE
+                    d.iz_zona='.$iddepto.';';
+        $data = $db->run($sql)->fetchAll();
+        return$data; 
+
+    }
+
+}
 ?>
